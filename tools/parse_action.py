@@ -43,6 +43,15 @@ FABRICATION_WORDS = ("价格", "多少钱", "库存", "有货", "在售", "质�
 # 疑似报价，如 "3999元"、"¥3999"
 PRICE_PATTERN = re.compile(r"\d+\s*元|[¥￥]\s*\d")
 
+# 中文输入法下的全角引号，会让 JSON 直接解析失败
+FULLWIDTH_QUOTES = {
+    "\u201c": '"',  # “
+    "\u201d": '"',  # ”
+    "\uff02": '"',  # ＂
+    "\u2018": "'",  # ‘
+    "\u2019": "'",  # ’
+}
+
 ERROR = "错误"
 WARN = "警告"
 
@@ -97,8 +106,22 @@ def find_json_object(text):
     return None, -1, -1
 
 
+def normalize_quotes(text):
+    """把全角引号换成半角引号，返回 (新文本, 替换次数)。"""
+    count = 0
+    for src, dst in FULLWIDTH_QUOTES.items():
+        hits = text.count(src)
+        if hits:
+            count += hits
+            text = text.replace(src, dst)
+    return text, count
+
+
 def extract(raw):
-    """从模型原始回复中提取 JSON。返回 (obj, notes, error)。"""
+    """从模型原始回复中提取 JSON。
+
+    返回 (obj, notes, error, quote_fixed)。
+    """
     notes = []
 
     cleaned = strip_think(raw)
@@ -111,16 +134,27 @@ def extract(raw):
     cleaned = unfenced
 
     obj, start, end = find_json_object(cleaned)
+    quote_fixed = False
     if obj is None:
-        return None, notes, "回复中没有找到合法的 JSON 对象"
+        # 模型有时会输出中文全角引号，先尝试归一化再解析
+        normalized, replaced = normalize_quotes(cleaned)
+        if replaced:
+            obj, start, end = find_json_object(normalized)
+            if obj is not None:
+                quote_fixed = True
+                cleaned = normalized
+                notes.append("回复使用了全角引号，已替换为半角后解析（%d 处）" % replaced)
+
+    if obj is None:
+        return None, notes, "回复中没有找到合法的 JSON 对象", False
 
     if cleaned[:start].strip() or cleaned[end:].strip():
         notes.append("JSON 前后存在多余文字，已忽略")
 
     if not isinstance(obj, dict):
-        return None, notes, "JSON 顶层不是对象"
+        return None, notes, "JSON 顶层不是对象", False
 
-    return obj, notes, None
+    return obj, notes, None, quote_fixed
 
 
 def classify(obj):
@@ -258,6 +292,10 @@ DEMO_CASES = [
     ('{"speech": "这款冰箱**特价**只要3999元，库存充足", "action": "wave"}', "含 Markdown 与编造信息"),
     ('{"action": "dance", "target": "B区1号展位", "speech_on_start": "走", "speech_on_arrival": "到了"}',
      "分类 3 用了分类 5 的动作"),
+    ('{\u201caction\u201d: \u201cguide_to\u201d, \u201ctarget\u201d: \u201cA区2号展位\u201d, '
+     '\u201cspeech_on_start\u201d: \u201c好的，请跟我来。\u201d, '
+     '\u201cspeech_on_arrival\u201d: \u201c这款是65英寸4K量子点电视，支持120Hz刷新率。\u201d}',
+     "全角引号（中文输入法直接输出）"),
     ("抱歉，我不太明白你的意思。", "根本没有 JSON"),
 ]
 
@@ -276,13 +314,15 @@ def read_input(args):
 
 
 def run_one(raw, quiet=False):
-    obj, notes, error = extract(raw)
+    obj, notes, error, quote_fixed = extract(raw)
     if error:
         if not quiet:
             print("解析失败：%s" % error)
             print("原始回复：%s" % raw.strip()[:120])
         return 1
     kind, issues = validate(obj)
+    if quote_fixed:
+        issues.append((WARN, "原回复用全角引号，不是合法 JSON，已自动修正；建议在提示词里明确要求半角引号"))
     if not quiet:
         print(render(kind, obj, notes, issues))
     return 1 if any(level == ERROR for level, _ in issues) else 0

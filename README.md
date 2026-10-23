@@ -20,6 +20,24 @@
 
 没有资料依据的内容（价格、库存、质保等），一律回答"暂时无法确认，建议咨询现场导购员"，不编造。
 
+## 界面
+
+工作流：
+
+![Dify 工作流画布](docs/images/workflow.png)
+
+分类器分出 5 个分支，分类 1/2/3 各接一个知识检索节点，分类 4/5 直接进 LLM，五个分支汇总到「直接回复」。
+
+文字回答：
+
+![商品咨询与场景推荐](docs/images/chat-text.png)
+
+带看指令：
+
+![带看指令输出](docs/images/chat-guide.png)
+
+最后一张里模型输出的是 JSON 原文，没有渲染成动作——这正是 `tools/parse_action.py` 要解决的问题。
+
 ## 输出示例
 
 文字回答（分类 1/2/4）：
@@ -73,11 +91,12 @@
 
 ```
 shopping-guide-mvp/
-├─ dsl/       Dify 导出的 Chatflow（智能导购MVP.yml）
-├─ kb/        知识库原始数据（products.md）
-├─ prompts/   分类描述和各分支提示词
-├─ tests/     测试记录（test-record.md）
-├─ tools/     JSON 指令解析与校验脚本（parse_action.py）
+├─ dsl/           Dify 导出的 Chatflow（智能导购MVP.yml）
+├─ kb/            知识库原始数据（products.md）
+├─ prompts/       分类描述和各分支提示词
+├─ tests/         测试记录（test-record.md）
+├─ tools/         JSON 指令解析与校验脚本（parse_action.py）
+├─ docs/images/   界面截图
 ├─ LICENSE
 └─ README.md
 ```
@@ -141,6 +160,7 @@ python tools/parse_action.py --demo
 - 数据是自建的模拟数据，共 18 个商品，不对应真实产品
 - 动作和带看只输出指令，没有接入真机，没有实际执行；`target` 只是位置名称，真机还需要位置名称到地图坐标的对照
 - 知识库没有价格、库存、质保信息，这类问题只能回答无法确认
+- 模型偶尔会用中文全角引号输出 JSON，导致解析失败；提示词里已要求半角引号，`tools/parse_action.py` 也会自动归一化
 - 测试题是自己设计的，数量有限，不代表真实场景下的表现
 
 ## 后续可做
