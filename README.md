@@ -64,7 +64,7 @@
 ## 技术方案
 
 - 平台：Dify 1.17.1（本地 Docker 部署）
-- 对话模型：DeepSeek（`deepseek-chat`）
+- 对话模型：DeepSeek（`deepseek-v4-flash`）；提示词不依赖具体模型，任意支持 JSON 输出的 Chat 模型均可替换
 - 向量模型：`BAAI/bge-m3`（硅基流动）
 - 知识库：18 个模拟商品，覆盖电视、空调、冰箱、洗衣机、生活家电
 - 检索：混合检索，权重设置，Top K = 3，Score 阈值 = 0.4
