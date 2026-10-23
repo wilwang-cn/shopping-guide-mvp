@@ -77,9 +77,40 @@ shopping-guide-mvp/
 ├─ kb/        知识库原始数据（products.md）
 ├─ prompts/   分类描述和各分支提示词
 ├─ tests/     测试记录（test-record.md）
+├─ tools/     JSON 指令解析与校验脚本（parse_action.py）
 ├─ LICENSE
 └─ README.md
 ```
+
+## 工具
+
+`tools/parse_action.py` 用来解析机器人输出的 JSON 指令并校验格式，零依赖，Python 3.8+。
+
+```bash
+python tools/parse_action.py '{"speech": "你好", "action": "wave"}'
+python tools/parse_action.py --file reply.txt
+python tools/parse_action.py --demo
+```
+
+它做三件事：
+
+1. 剥离模型回复里的 `<think>` 思考块和 Markdown 代码围栏，按括号配对截取 JSON
+2. 按字段判断是带看指令（分类 3）还是动作指令（分类 5）
+3. 校验动作白名单、必填字段、`guide_to` 的三个字段是否齐全、`none` 时 `speech_on_arrival` 是否留空；并检查话术里是否混入 Markdown 符号、括号，或知识库没有的价格、库存信息
+
+输出示例：
+
+```
+类型：带看指令（分类 3）
+动作：guide_to
+位置：A区2号展位
+出发话术：好的，请跟我来
+到达话术：这款65寸电视支持4K分辨率，适合客厅使用。
+
+校验结果：通过
+```
+
+退出码 `0` 表示通过（允许警告），`1` 表示存在错误级问题，可直接用于流水线判断。
 
 ## 如何复现
 
@@ -116,7 +147,7 @@ shopping-guide-mvp/
 
 - 扩充商品数量后重新测试检索表现
 - 对比 Rerank 模型和权重设置的效果
-- 增加代码节点解析 JSON，把话术和指令分开显示
+- 把 `tools/parse_action.py` 的校验逻辑搬进 Dify 代码节点，在流程内直接分离话术与指令
 
 ## License
 
