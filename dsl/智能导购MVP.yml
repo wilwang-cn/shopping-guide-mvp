@@ -1,0 +1,802 @@
+app:
+  description: 该机器人通过 Dify Chatflow 接收用户导购问题，先进行意图分类，再根据问题类型调用 RAG 检索知识库；有依据时由 DeepSeek
+    API 生成回答，无依据时进行兜底说明，商品带看分支则返回展区与展台位置信息，从而实现面向商场和产品展厅的智能导购问答流程。
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: advanced-chat
+  name: 智能导购MVP
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/deepseek:0.0.25@32f56796c4f9c3949f2a8cde44a5912f347b5a141dd7daf100048aeefd5e6593
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/siliconflow:0.0.61@f0952b183715405503a23ccef015e5d43948591fd10b60690f24c07873eed723
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        knowledge_file_size_limit: 15
+        single_chunk_attachment_limit: 10
+        skill_file_size_limit: 50
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: true
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: start
+        targetType: question-classifier
+      id: 1792470109442-source-1792470132875-target
+      selected: false
+      source: '1792470109442'
+      sourceHandle: source
+      target: '1792470132875'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: 1792470132875-1-1792470311436-target
+      selected: false
+      source: '1792470132875'
+      sourceHandle: '1'
+      target: '1792470311436'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: 1792470132875-1792470243746-17924713929260-target
+      selected: false
+      source: '1792470132875'
+      sourceHandle: '1792470243746'
+      target: '17924713929260'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: question-classifier
+        targetType: llm
+      id: 1792470132875-1792470245922-1792471770152-target
+      selected: false
+      source: '1792470132875'
+      sourceHandle: '1792470245922'
+      target: '1792471770152'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: question-classifier
+        targetType: llm
+      id: 1792470132875-1792473380114-1792473758762-target
+      source: '1792470132875'
+      sourceHandle: '1792473380114'
+      target: '1792473758762'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: 1792470132875-2-17924713928960-target
+      selected: false
+      source: '1792470132875'
+      sourceHandle: '2'
+      target: '17924713928960'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1792470311436-source-1792470640355-target
+      selected: false
+      source: '1792470311436'
+      sourceHandle: source
+      target: '1792470640355'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: llm
+        targetType: answer
+      id: 1792470640355-source-1792471043331-target
+      selected: false
+      source: '1792470640355'
+      sourceHandle: source
+      target: '1792471043331'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 17924713928960-source-17924714375030-target
+      source: '17924713928960'
+      sourceHandle: source
+      target: '17924714375030'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 17924713929260-source-17924714432830-target
+      source: '17924713929260'
+      sourceHandle: source
+      target: '17924714432830'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: llm
+        targetType: answer
+      id: 17924714375030-source-1792471043331-target
+      selected: false
+      source: '17924714375030'
+      sourceHandle: source
+      target: '1792471043331'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: llm
+        targetType: answer
+      id: 17924714432830-source-1792471043331-target
+      selected: false
+      source: '17924714432830'
+      sourceHandle: source
+      target: '1792471043331'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: llm
+        targetType: answer
+      id: 1792471770152-source-1792471043331-target
+      source: '1792471770152'
+      sourceHandle: source
+      target: '1792471043331'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: llm
+        targetType: answer
+      id: 1792473758762-source-1792471043331-target
+      selected: false
+      source: '1792473758762'
+      sourceHandle: source
+      target: '1792471043331'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables: []
+      height: 73
+      id: '1792470109442'
+      position:
+        x: -411.83826976011676
+        y: 6.047919507455603
+      positionAbsolute:
+        x: -411.83826976011676
+        y: 6.047919507455603
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        classes:
+        - id: '1'
+          label: CLASS 1
+          name: 询问某个商品的参数、功能、特点、规格、能效、容量、尺寸等具体信息
+        - id: '2'
+          label: CLASS 2
+          name: 询问怎么选、哪个更适合某种场景、户型、人群或预算，或需要推荐、对比、使用方法
+        - id: '1792470243746'
+          label: CLASS 3
+          name: 询问某个商品在哪里、在哪个展区或展位，或要求机器人带自己去看某个商品
+        - id: '1792470245922'
+          label: CLASS 4
+          name: 与商品无关的闲聊、超出导购范围的问题，或无法归入其他类别的内容
+        - id: '1792473380114'
+          label: CLASS 5
+          name: 用户打招呼、问候，或要求机器人做动作，例如握手、跳舞、转圈、挥手
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v4-flash
+          provider: langgenius/deepseek/deepseek
+        query_variable_selector:
+        - '1792470109442'
+        - sys.query
+        selected: false
+        title: 问题分类器
+        type: question-classifier
+        vision:
+          enabled: false
+      height: 304
+      id: '1792470132875'
+      position:
+        x: -131.81733403280293
+        y: 27.047919507455603
+      positionAbsolute:
+        x: -131.81733403280293
+        y: 27.047919507455603
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - iG8/1Gus67QxpUVQKOcVHT6wtRMAk+fFWaVx1Hylu0mJl681Lg2QkT0RcVc2r7We
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          reranking_model:
+            model: netease-youdao/bce-reranker-base_v1
+            provider: langgenius/siliconflow/siliconflow
+          score_threshold: 0.4
+          top_k: 3
+          weights:
+            keyword_setting:
+              keyword_weight: 0.3
+            vector_setting:
+              embedding_model_name: BAAI/bge-m3
+              embedding_provider_name: langgenius/siliconflow/siliconflow
+              vector_weight: 0.7
+            weight_type: customized
+        query_attachment_selector: []
+        query_variable_selector:
+        - '1792470109442'
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        title: 商品信息
+        type: knowledge-retrieval
+      height: 52
+      id: '1792470311436'
+      position:
+        x: 173.0931922829863
+        y: 11.248467083038378
+      positionAbsolute:
+        x: 173.0931922829863
+        y: 11.248467083038378
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1792470311436'
+          - result
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v4-flash
+          provider: langgenius/deepseek/deepseek
+        model_selector: null
+        prompt_template:
+        - id: aaf8a4be-aa11-4875-8e15-59eb35b83067
+          role: system
+          text: '你是商场家电区的智能导购助手。请只根据【参考资料】回答用户关于商品信息的问题。
+
+            规则：
+
+            1. 只使用参考资料里明确写出的内容。没写的信息，直接回答"这个信息我暂时无法确认，建议咨询现场导购员"，不要猜测或编造。
+
+            2. 如果资料里某项写着"暂无信息"，同样按无法确认处理。
+
+            3. 资料里有多个商品时，只回答与用户问题最相关的。用户没说清是哪一款时，请用户告知型号。
+
+            4. 回答简洁，先给结论，再用 1 到 2 句补充。
+
+            5. 回答里不要出现"参考资料""检索"等字眼。
+
+            6. 资料里没有价格、库存、质保、优惠等信息。用户问到这些，一律回答"这个信息我暂时无法确认，建议咨询现场导购员"，不要使用"在售""有货"等资料里没有的说法。
+
+            7. 不要说某个品类"一共有几款"或"只有几款"，只介绍资料里出现的商品，需要时可以说"目前查到的有……，想了解其他型号可以告诉我"。
+
+            8. 用纯文本回答，不要使用星号、井号等 Markdown 符号。
+
+            【参考资料】
+
+            {{#context#}}'
+        - id: 2a144e3e-79c2-41c8-a269-82220e13d770
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1792470640355'
+      position:
+        x: 444.14608739092296
+        y: 11.248467083038378
+      positionAbsolute:
+        x: 444.14608739092296
+        y: 11.248467083038378
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        answer: '{{#1792470640355.text#}}
+
+          {{#17924714375030.text#}}
+
+          {{#17924714432830.text#}}
+
+          {{#1792473758762.text#}}
+
+          {{#1792471770152.text#}}'
+        selected: false
+        title: 直接回复
+        type: answer
+        variables: []
+      height: 156
+      id: '1792471043331'
+      position:
+        x: 909.8912181118512
+        y: 309.3084920766242
+      positionAbsolute:
+        x: 909.8912181118512
+        y: 309.3084920766242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - iG8/1Gus67QxpUVQKOcVHT6wtRMAk+fFWaVx1Hylu0mJl681Lg2QkT0RcVc2r7We
+        desc: ''
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          reranking_model:
+            model: netease-youdao/bce-reranker-base_v1
+            provider: langgenius/siliconflow/siliconflow
+          score_threshold: 0.4
+          top_k: 3
+          weights:
+            keyword_setting:
+              keyword_weight: 0.3
+            vector_setting:
+              embedding_model_name: BAAI/bge-m3
+              embedding_provider_name: langgenius/siliconflow/siliconflow
+              vector_weight: 0.7
+            weight_type: customized
+        query_attachment_selector: []
+        query_variable_selector:
+        - '1792470109442'
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        title: 场景推荐
+        type: knowledge-retrieval
+      height: 52
+      id: '17924713928960'
+      position:
+        x: 173.0931922829863
+        y: 113.76735414458943
+      positionAbsolute:
+        x: 173.0931922829863
+        y: 113.76735414458943
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - iG8/1Gus67QxpUVQKOcVHT6wtRMAk+fFWaVx1Hylu0mJl681Lg2QkT0RcVc2r7We
+        desc: ''
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          reranking_model:
+            model: netease-youdao/bce-reranker-base_v1
+            provider: langgenius/siliconflow/siliconflow
+          score_threshold: 0.4
+          top_k: 3
+          weights:
+            keyword_setting:
+              keyword_weight: 0.3
+            vector_setting:
+              embedding_model_name: BAAI/bge-m3
+              embedding_provider_name: langgenius/siliconflow/siliconflow
+              vector_weight: 0.7
+            weight_type: customized
+        query_attachment_selector: []
+        query_variable_selector:
+        - '1792470109442'
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        title: 位置与带看
+        type: knowledge-retrieval
+      height: 52
+      id: '17924713929260'
+      position:
+        x: 173.0931922829863
+        y: 214.58577519722087
+      positionAbsolute:
+        x: 173.0931922829863
+        y: 214.58577519722087
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '17924713928960'
+          - result
+        desc: ''
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v4-flash
+          provider: langgenius/deepseek/deepseek
+        model_selector: null
+        prompt_template:
+        - id: aaf8a4be-aa11-4875-8e15-59eb35b83067
+          role: system
+          text: '你是商场家电区的智能导购助手。请只根据【参考资料】为用户推荐商品。 规则： 1. 只使用参考资料里明确写出的内容，没有依据不要推荐，也不要编造。
+            2. 推荐时说明理由，理由必须来自资料中的适用场景、参数或适合人群。 3. 如果资料里没有明确说明某款适合某类人群（比如"有小孩"），不要硬说适合，直接说"资料里没有明确说明"，再根据资料里写明的容量、人数等信息给出参考。
+            4. 最多推荐 2 款，回答简洁。 5. 回答里不要出现"参考资料""检索"等字眼。 6. 资料里没有价格、库存、质保、优惠等信息。用户问到这些，一律回答"这个信息我暂时无法确认，建议咨询现场导购员"，不要使用"在售""有货"等资料里没有的说法。
+            7. 不要说某个品类"一共有几款"或"只有几款"，只介绍资料里出现的商品。 8. 用纯文本回答，不要使用星号、井号等 Markdown 符号。
+
+            【参考资料】
+
+            {{#context#}}'
+        - id: 2a144e3e-79c2-41c8-a269-82220e13d770
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: LLM (1)
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '17924714375030'
+      position:
+        x: 444.14608739092296
+        y: 113.76735414458943
+      positionAbsolute:
+        x: 444.14608739092296
+        y: 113.76735414458943
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '17924713929260'
+          - result
+        desc: ''
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v4-flash
+          provider: langgenius/deepseek/deepseek
+        model_selector: null
+        prompt_template:
+        - id: aaf8a4be-aa11-4875-8e15-59eb35b83067
+          role: system
+          text: '你是商场家电区的智能导购机器人。请只根据【参考资料】处理用户的位置询问和带看请求。请只输出一个 JSON，不要输出任何其他文字，不要加代码块符号。
+            格式：{"action": "...", "target": "...", "speech_on_start": "...", "speech_on_arrival":
+            "..."} 规则： 1. 用户明确要求带自己去看某个具体商品（如"带我去看""我想去看看"）：action 用 guide_to。target
+            填资料里写明的展区和展位；speech_on_start 说一句简短的话（如"好的，请跟我来"）；speech_on_arrival 用 2
+            句话介绍该商品，内容只能来自资料里写明的参数、功能特点和适用场景。 2. 用户只是问位置（如"在哪里""哪个展区"）：action 用 none，target
+            填资料里的位置，speech_on_start 用一句话告知位置并问"需要我带您过去吗"，speech_on_arrival 留空字符串。
+            3. 资料里位置是"暂无信息"，或找不到对应商品：action 用 none，target 和 speech_on_arrival 留空字符串，speech_on_start
+            说"这个商品的位置我暂时无法确认，请咨询现场导购员"。 4. 用户说的是某个品类（如"电视"）而不是某一款：action 用 none，target
+            和 speech_on_arrival 留空字符串，speech_on_start 说"目前查到的有……"并列出资料里出现的型号和展位，请用户选择具体商品，不要说一共有几款。
+            5. target 只能使用资料里写明的位置，介绍内容只能使用资料里写明的信息，不要提价格、库存、质保。资料里没有的不要编。 6. 所有话术只写口头内容，不描写动作，不出现括号、星号或
+            Markdown 符号。
+
+            【参考资料】
+
+            {{#context#}}'
+        - id: 2a144e3e-79c2-41c8-a269-82220e13d770
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: LLM (2)
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '17924714432830'
+      position:
+        x: 449.6855610751335
+        y: 214.58577519722087
+      positionAbsolute:
+        x: 449.6855610751335
+        y: 214.58577519722087
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - sys
+          - query
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v4-flash
+          provider: langgenius/deepseek/deepseek
+        model_selector: null
+        prompt_template:
+        - id: 68eb4e24-8b1e-4213-ac8f-643a3212a760
+          role: system
+          text: 我们是位于绵阳的商场。你是商场家电区的智能导购助手,名字“小导”，只负责电视、空调、冰箱、洗衣机、生活家电的参数介绍、选购推荐和展区位置。
+            用户问候或感谢时，礼貌回应并说明你能帮什么；问题与商品无关时，礼貌说明超出范围，并引导用户询问家电相关问题。但如果是天气、时间还有旅游地点相关的推荐的话，可以适当简洁回答。回答不超过
+            3 句话，用纯文本，不要使用星号、井号等符号。
+        - id: 690663f8-f259-44d1-950c-bce1f43201e8
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: 其他
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1792471770152'
+      position:
+        x: 173.0931922829863
+        y: 314.61576991444787
+      positionAbsolute:
+        x: 173.0931922829863
+        y: 314.61576991444787
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - sys
+          - query
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v4-flash
+          provider: langgenius/deepseek/deepseek
+        model_selector: null
+        prompt_template:
+        - edition_type: basic
+          id: 8bffe5c8-074f-4671-812a-232510d4fcf3
+          role: system
+          text: '你是商场家电区的智能导购机器人。用户可能打招呼、问你是谁，或要求你做动作。请只输出一个 JSON，不要输出任何其他文字，不要加代码块符号。
+
+            格式：{"speech": "...", "action": "..."}
+
+            规则：
+
+            1. speech 是你要说的话，不超过 20 个字（自我介绍时不超过 60 个字），只写口头内容，不要描写动作，不要出现括号、星号或 Markdown
+            符号。
+
+            2. action 只能从这几个里选一个：wave、handshake、dance、spin、none。
+
+            3. 用户问候时，action 用 wave，speech 礼貌问候并说明你能介绍家电。
+
+            4. 用户说握手，action 用 handshake；说跳舞，用 dance；说转圈，用 spin；说挥手，用 wave。
+
+            5. 用户要求的动作不在上面这些里，action 用 none，speech 说"这个动作我暂时还不会"。
+
+            6. 用户问你是谁、叫什么、能做什么时，action 用 wave，speech 介绍自己：你是商场家电区的智能导购机器人，名字叫"小导"，能介绍商品参数、按场景推荐、告知位置并带看，还能握手、跳舞、转圈。
+
+            7. 你是 AI，不是真人。用户问你是不是真人，如实说明你是 AI 导购机器人，action 用 none。用户问你用的是什么模型、谁开发的，speech
+            说"我是基于大语言模型的智能导购助手，具体技术细节我不太清楚"，action 用 none。
+
+            示例：
+
+            用户：握手
+
+            输出：{"speech": "你好", "action": "handshake"}
+
+            用户：你好
+
+            输出：{"speech": "您好，欢迎光临，需要了解家电可以问我", "action": "wave"}
+
+            用户：翻个跟头
+
+            输出：{"speech": "这个动作我暂时还不会", "action": "none"}
+
+            用户：你是谁
+
+            输出：{"speech": "我是家电区的导购机器人小导，能介绍商品、推荐、带您看，还会握手跳舞", "action": "wave"}'
+        - id: 570d4912-0fc6-4dd1-87dc-c3ac4129eadb
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: 问候与动作
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1792473758762'
+      position:
+        x: 173.0931922829863
+        y: 421.25358012692146
+      positionAbsolute:
+        x: 173.0931922829863
+        y: 421.25358012692146
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    viewport:
+      x: 429.2651996813588
+      y: 264.13432905339664
+      zoom: 0.5184149345592325
+  rag_pipeline_variables: []
